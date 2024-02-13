@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:test_application/util/constant.dart';
+import 'package:test_application/util/keyboard.dart';
 import 'package:test_application/widgets/custom_suffix_icon.dart';
+import 'package:test_application/widgets/form_error.dart';
 
 class SignForm extends StatefulWidget {
   const SignForm({super.key});
@@ -10,7 +12,6 @@ class SignForm extends StatefulWidget {
 }
 
 class _SignFormState extends State<SignForm> {
-
   final _formKey = GlobalKey<FormState>();
   String? email;
   String? password;
@@ -35,7 +36,8 @@ class _SignFormState extends State<SignForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Form(key: _formKey,
+    return Form(
+      key: _formKey,
       child: Column(
         children: [
           TextFormField(
@@ -65,7 +67,8 @@ class _SignFormState extends State<SignForm> {
               labelText: "Email",
               hintText: "Enter your email",
               floatingLabelBehavior: FloatingLabelBehavior.always,
-              suffixIcon: CustomSuffixIcon(svgIcon: "lib/assets/icons/Mail.svg"),
+              suffixIcon:
+                  CustomSuffixIcon(svgIcon: "lib/assets/icons/Mail.svg"),
             ),
           ),
           const SizedBox(height: 20),
@@ -96,11 +99,41 @@ class _SignFormState extends State<SignForm> {
               // If  you are using latest version of flutter then lable text and hint text shown like this
               // if you r using flutter less then 1.20.* then maybe this is not working properly
               floatingLabelBehavior: FloatingLabelBehavior.always,
-              suffixIcon: CustomSuffixIcon(svgIcon: "lib/assets/icons/Lock.svg"),
+              suffixIcon:
+                  CustomSuffixIcon(svgIcon: "lib/assets/icons/Lock.svg"),
             ),
           ),
           const SizedBox(height: 20),
+          Row(
+            children: [
+              Checkbox(
+                value: remember,
+                activeColor: primaryColor,
+                onChanged: (value) {
+                  setState(() {
+                    remember = value;
+                  });
+                },
+              ),
+              const Text("Remember me"),
+              const Spacer(),
+              GestureDetector(
+                child: const Text("Forgot Password",
+                style: TextStyle(decoration: TextDecoration.underline),),
+              ),
+            ],
+          ),
+          FormError(errors: errors),
+          const SizedBox(height: 16,),
+          ElevatedButton(onPressed: () {
+            if (_formKey.currentState!.validate()) {
+              _formKey.currentState!.save();
+              KeyboardUtil.hideKeyboard(context);
+              //Navigator.pushNamed(context, routeName)
+            }
+          }, child: const Text("Continue"))
         ],
-      ),);
+      ),
+    );
   }
 }
